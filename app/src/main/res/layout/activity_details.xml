@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+
+
+        <ui.widget.PullUpToLoadMore
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/ptlm"
+            android:orientation="vertical"
+            >
+            <ui.widget.MyScrollView
+                android:id="@+id/scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                >
+                <include layout="@layout/activity_details_view1"></include>
+            </ui.widget.MyScrollView>
+            <ui.widget.MyScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                >
+                <include layout="@layout/activity_details_view2"></include>
+            </ui.widget.MyScrollView>
+
+
+        </ui.widget.PullUpToLoadMore>
+
+
+</RelativeLayout>

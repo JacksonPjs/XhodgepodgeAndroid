@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/base_text_color_light"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginTop="10dp"
+        android:layout_margin="5dp"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_discount_tiyan"
+            />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/id_content"
+        android:layout_centerVertical="true"
+
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="￥1992"
+            android:layout_marginLeft="10dp"
+            />
+
+    </LinearLayout>
+
+
+    <ui.widget.DiscountView
+        android:id="@+id/discountview"
+        android:layout_toRightOf="@id/id_content"
+        android:layout_marginLeft="30dp"
+        android:layout_width="30dp"
+        android:layout_height="100dp"></ui.widget.DiscountView>
+        <LinearLayout
+            android:layout_toRightOf="@+id/discountview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/motto"
+                android:textSize="10sp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/motto"
+                android:textSize="10sp"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

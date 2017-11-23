@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.x.xhodgepodgeandroid">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:name="app.App"
+        android:theme="@style/AppTheme">
+        <activity android:name="ui.activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"
+
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="ui.activity.AboutActivity"/>
+        <activity android:name="ui.activity.RecyclerViewActivity"/>
+        <activity android:name="ui.activity.TextDialogActivity"></activity>
+        <activity android:name="ui.activity.TextProgressBarActivity"></activity>
+        <activity android:name="ui.activity.GalleryRecycleActivity"></activity>
+        <activity android:name="ui.activity.DeleteRecycleActivity"></activity>
+        <activity android:name="ui.activity.LinearRecycleActivy"></activity>
+        <activity android:name="ui.activity.GridRecycleActivity"></activity>
+        <activity android:name="ui.activity.StaggeredGridRecycleActivity"></activity>
+        <activity android:name="ui.activity.DiscountActivity"></activity>
+        <activity android:name="ui.activity.DetailsActivity"></activity>
+        <activity android:name="ui.activity.TextSocketClient"></activity>
+        <activity android:name="ui.activity.ProgressActivity"></activity>
+        <activity android:name="ui.activity.SurfaceViewActivity"></activity>
+        <activity android:name="ui.activity.ViewPagerActivity"></activity>
+    </application>
+
+</manifest>
