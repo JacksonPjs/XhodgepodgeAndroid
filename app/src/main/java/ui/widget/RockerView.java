@@ -284,15 +284,15 @@ public class RockerView extends SurfaceView implements Runnable, SurfaceHolder.C
                     if (movex<0){
                         movex=mAreaPosition.x-mRockerPosition.x;
                     }
-                    if (movey<-0){
+                    if (movey<0){
                         movey=mAreaPosition.y-mRockerPosition.y;
                     }
 
                 Log.e("mar",mAreaRadius+"");
-                    float movexf=(float)movex/mAreaRadius;
-                    float moveyf=(float)movey/mAreaRadius;
-                    int l= (int) (movexf*100);
-                    int k= (int) (moveyf*100);
+                float movexf=(float)movex/mAreaRadius;
+                float moveyf=(float)movey/mAreaRadius;
+                int l= (int) (movexf*100);
+                int k= (int) (moveyf*100);
                 if (mListener != null) {
                     float radian = MathUtils.getRadian(mAreaPosition, new Point((int) event.getX(), (int) event.getY()));
                     int angle = RockerView.this.getAngleConvert(radian);

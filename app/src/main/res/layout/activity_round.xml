@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ui.widget.BullsView
+        android:id="@+id/round"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ui.widget.NumTipSeekBar
+        android:id="@+id/tipseekbar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        app:NumTipSeekBar_borderColor="@color/red"
+        app:NumTipSeekBar_borderSize="4dp"
+        app:NumTipSeekBar_circleApertureColor="@color/colorPrimary"
+        app:NumTipSeekBar_circleApertureWidth="5dp"
+        app:NumTipSeekBar_circleButtonColor="@color/colorAccent"
+        app:NumTipSeekBar_circleButtonRadius="30dp"
+        app:NumTipSeekBar_isRound="false"
+        app:NumTipSeekBar_isShowButton="true"
+        app:NumTipSeekBar_maxProgress="100"
+        app:NumTipSeekBar_progressColor="@color/white"
+        app:NumTipSeekBar_progressHeight="20dp"
+        app:NumTipSeekBar_selectProgress="20"
+        app:NumTipSeekBar_tickBarColor="#000000"
+        app:NumTipSeekBar_tickBarHeight="20dp" />
+
+    <SeekBar
+        android:id="@+id/seek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

@@ -24,11 +24,13 @@ import ui.activity.DiscountActivity;
 import ui.activity.GalleryRecycleActivity;
 import ui.activity.ProgressActivity;
 import ui.activity.RecyclerViewActivity;
+import ui.activity.RoundActivity;
 import ui.activity.SurfaceViewActivity;
 import ui.activity.TextDialogActivity;
 import ui.activity.TextProgressBarActivity;
 import ui.activity.TextSocketClient;
 import ui.activity.ViewPagerActivity;
+import ui.activity.WebViewActivity;
 import ui.widget.GalleryRecyclerView;
 
 /**
@@ -46,6 +48,8 @@ public class FragmentPic extends Fragment {
     Button socket;
     @Bind(R.id.surface)
     Button surface;
+    @Bind(R.id.round)
+    Button round;
 
     Context context;
 
@@ -82,7 +86,7 @@ public class FragmentPic extends Fragment {
     }
 
     @OnClick({R.id.progressBar, R.id.dialog, R.id.recyclerView, R.id.discount, R.id.details, R.id.socket,
-    R.id.surface})
+    R.id.surface,R.id.round})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -116,7 +120,11 @@ public class FragmentPic extends Fragment {
                 startActivity(intent);
                 break;
                 case R.id.surface:
-                intent = new Intent(context, SurfaceViewActivity.class);
+                intent = new Intent(context, WebViewActivity.class);
+                startActivity(intent);
+                break;
+                case R.id.round:
+                intent = new Intent(context, RoundActivity.class);
                 startActivity(intent);
                 break;
 

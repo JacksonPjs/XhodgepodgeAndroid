@@ -38,6 +38,8 @@
         <activity android:name="ui.activity.ProgressActivity"></activity>
         <activity android:name="ui.activity.SurfaceViewActivity"></activity>
         <activity android:name="ui.activity.ViewPagerActivity"></activity>
+        <activity android:name="ui.activity.WebViewActivity"></activity>
+        <activity android:name="ui.activity.RoundActivity"></activity>
     </application>
 
 </manifest>
