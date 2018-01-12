@@ -1,28 +1,37 @@
 package ui.activity;
 
 
-
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.pvj.xlibrary.log.Logger;
 import com.x.xhodgepodgeandroid.R;
 
+import app.App;
 import butterknife.Bind;
+import ui.fragment.FragmentCamera;
 import ui.fragment.FragmentPic;
 import utils.NavigationViewUtil;
+import utils.PermissionsManager;
 
 
 public class MainActivity extends BaseActivity {
-   @Bind(R.id.toolbar)
+    private final static String TAG = "MainActivity";
+    @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.appbar)
     AppBarLayout appbar;
@@ -41,6 +50,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initViews() {
+
+        App.setCurrentActivity(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -58,7 +69,7 @@ public class MainActivity extends BaseActivity {
             }
         };
         mDrawerToggle.syncState();
-        NavigationViewUtil.setDrawerLeftEdgeSize(this,mDrawerLayout,0.5f);
+        NavigationViewUtil.setDrawerLeftEdgeSize(this, mDrawerLayout, 0.5f);
 //        setDrawerRightEdgeSize(this,mDrawerLayout,0.5f);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         navigation_view.setItemIconTintList(null);
@@ -96,14 +107,15 @@ public class MainActivity extends BaseActivity {
         selectNavigation(0);
     }
 
-    public void selectNavigation(int position){
-        Fragment fragment=null;
-        switch (position){
+    public void selectNavigation(int position) {
+        Fragment fragment = null;
+        switch (position) {
             case 0:
-                fragment=new FragmentPic();
+                fragment = new FragmentPic();
 //                fragment=new UpLoadFileFragment();
                 break;
             case 1:
+                fragment = new FragmentCamera();
 //                fragment=new TestRxJavaFragment();
                 break;
             case 2:
@@ -119,15 +131,15 @@ public class MainActivity extends BaseActivity {
 //                fragment=new RecycleViewFragment();
                 break;
             case 6:
-                Intent intent=new Intent(this,AboutActivity.class);
+                Intent intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
                 break;
 
 
         }
-        if (fragment!=null){
-            FragmentManager fragmentManager=getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.frame_content,fragment).commit();
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.frame_content, fragment).commit();
             setTitle("图片");
         }
     }
@@ -140,4 +152,7 @@ public class MainActivity extends BaseActivity {
 //            break;
 //        }
 //    }
+
+
+
 }
