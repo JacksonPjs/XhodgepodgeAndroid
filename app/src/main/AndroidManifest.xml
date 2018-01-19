@@ -56,7 +56,12 @@
         <activity android:name="ui.activity.ViewPagerActivity"></activity>
         <activity android:name="ui.activity.WebViewActivity"></activity>
         <activity android:name="ui.activity.RoundActivity"></activity>
-        <activity android:name="ui.activity.CameraActivity"></activity>
+        <activity android:name="ui.activity.CameraActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity android:name="ui.activity.MediaCodecActivity"></activity>
     </application>
 
 </manifest>

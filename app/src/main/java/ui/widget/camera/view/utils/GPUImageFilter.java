@@ -21,6 +21,8 @@ public class GPUImageFilter {
 
     public static final String NO_FILTER_VERTEX_SHADER = "" +
             "attribute vec4 position;\n" +
+            "attribute vec4 vPosition;\n"+
+            "uniform mat4 uMVPMatrix;\n"+
             "attribute vec4 inputTextureCoordinate;\n" +
             " \n" +
             "varying vec2 textureCoordinate;\n" +
@@ -51,12 +53,15 @@ public class GPUImageFilter {
     protected int mGLAttribTextureCoordinate;
     protected int mOutputWidth;
     protected int mOutputHeight;
+    private int mImageWidth;
+    private int mImageHeight;
     protected boolean mIsInitialized;
 
     protected FloatBuffer mGLCubeBuffer;
     protected FloatBuffer mGLTextureBuffer;
 
     protected int rotation;
+    float []  rotatedTex;
 
     public GPUImageFilter() {
         this(NO_FILTER_VERTEX_SHADER, NO_FILTER_FRAGMENT_SHADER);
@@ -71,9 +76,51 @@ public class GPUImageFilter {
 
     public void setRotation(int degress){
         this.rotation=degress;
-        Log.e("rotation==",rotation+"");
     }
+    public void setSize(){
+        mImageWidth=mOutputWidth;
+        mImageHeight=mOutputHeight;
 
+        float outputWidth = mOutputWidth;
+        float outputHeight = mOutputHeight;
+        if (rotation == 270 || rotation == 90) {
+            outputWidth = mOutputHeight;
+            outputHeight = mOutputWidth;
+        }
+
+        float ratio1 = outputWidth / mImageWidth;
+        float ratio2 = outputHeight / mImageHeight;
+
+        float ratioMax = Math.max(ratio1, ratio2);
+        int imageWidthNew = Math.round(mImageWidth * ratioMax);
+        int imageHeightNew = Math.round(mImageHeight * ratioMax);
+
+        float ratioWidth = imageWidthNew / outputWidth;
+        float ratioHeight = imageHeightNew / outputHeight;
+        float[] textureCords = TextureRotationUtil.getRotation(Rotation.fromInt(rotation), false, false);
+
+        float distHorizontal = (1 - 1 / ratioWidth) / 2;
+        float distVertical = (1 - 1 / ratioHeight) / 2;
+        textureCords = new float[]{
+                addDistance(textureCords[0], distHorizontal), addDistance(textureCords[1], distVertical),
+                addDistance(textureCords[2], distHorizontal), addDistance(textureCords[3], distVertical),
+                addDistance(textureCords[4], distHorizontal), addDistance(textureCords[5], distVertical),
+                addDistance(textureCords[6], distHorizontal), addDistance(textureCords[7], distVertical),
+        };
+        float[] cube =   new float[]{
+                OpenGLUtils. CUBE[0] / ratioHeight, OpenGLUtils.CUBE[1] / ratioWidth,
+                OpenGLUtils.CUBE[2] / ratioHeight, OpenGLUtils.CUBE[3] / ratioWidth,
+                OpenGLUtils.CUBE[4] / ratioHeight, OpenGLUtils.CUBE[5] / ratioWidth,
+                OpenGLUtils.CUBE[6] / ratioHeight, OpenGLUtils.CUBE[7] / ratioWidth,
+        };
+        mGLCubeBuffer.clear();
+        mGLCubeBuffer.put(cube).position(0);
+        mGLTextureBuffer.clear();
+        mGLTextureBuffer.put(textureCords).position(0);
+    }
+    private float addDistance(float coordinate, float distance) {
+        return coordinate == 0.0f ? distance : 1 - distance;
+    }
     public final void init() {
         onInit();
         mIsInitialized = true;
@@ -83,7 +130,6 @@ public class GPUImageFilter {
 
     public void onInit() {
         mGLProgId = OpenGLUtils.loadProgram(mVertexShader, mFragmentShader);
-        //获取Shader中定义的变量在program中的位置
         mGLAttribPosition = GLES20.glGetAttribLocation(mGLProgId, "position");
         OpenGLUtils.checkGlError("glGetAttribLocation");
         mGLUniformTexture = GLES20.glGetUniformLocation(mGLProgId, "inputTexture");
@@ -92,43 +138,22 @@ public class GPUImageFilter {
         OpenGLUtils.checkGlError("glGetAttribLocation");
         mGLCubeBuffer = ByteBuffer.allocateDirect(OpenGLUtils.CUBE.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         mGLCubeBuffer.put(OpenGLUtils.CUBE).position(0);
-        float []  rotatedTex;
+
         switch (rotation) {
             case 0:
-//                rotatedTex=TextureRotationUtil.TEXTURE_NO_ROTATION;
-//                rotatedTex = new float[]{
-//                        TextureRotationUtil.flip(rotatedTex[0]), rotatedTex[1],
-//                        TextureRotationUtil.flip(rotatedTex[2]), rotatedTex[3],
-//                        TextureRotationUtil.flip(rotatedTex[4]), rotatedTex[5],
-//                        TextureRotationUtil.flip(rotatedTex[6]), rotatedTex[7],
-//                };
                 mGLTextureBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_NO_ROTATION.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                 mGLTextureBuffer.put(TextureRotationUtil.TEXTURE_NO_ROTATION);
                 break;
             case 90:
-//                rotatedTex=TextureRotationUtil.TEXTURE_ROTATED_90;
-//                rotatedTex = new float[]{
-//                        rotatedTex[0], TextureRotationUtil.flip(rotatedTex[1]),
-//                        rotatedTex[2], TextureRotationUtil.flip(rotatedTex[3]),
-//                        rotatedTex[4], TextureRotationUtil.flip(rotatedTex[5]),
-//                        rotatedTex[6], TextureRotationUtil.flip(rotatedTex[7]),
-//                };
                 mGLTextureBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_ROTATED_90.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                 mGLTextureBuffer.put(TextureRotationUtil.TEXTURE_ROTATED_90);
                 break;
             case 180:
-                rotatedTex=TextureRotationUtil.TEXTURE_ROTATED_180;
-                rotatedTex = new float[]{
-                        TextureRotationUtil.flip(rotatedTex[0]), rotatedTex[1],
-                        TextureRotationUtil.flip(rotatedTex[2]), rotatedTex[3],
-                        TextureRotationUtil.flip(rotatedTex[4]), rotatedTex[5],
-                        TextureRotationUtil.flip(rotatedTex[6]), rotatedTex[7],
-                };
                 mGLTextureBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_ROTATED_180.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-                mGLTextureBuffer.put(rotatedTex);
+                mGLTextureBuffer.put(TextureRotationUtil.TEXTURE_ROTATED_180);
                 break;
             case 270:
-                rotatedTex=TextureRotationUtil.TEXTURE_ROTATED_270;
+                rotatedTex= TextureRotationUtil.TEXTURE_ROTATED_270;
                 rotatedTex = new float[]{
                         rotatedTex[0], TextureRotationUtil.flip(rotatedTex[1]),
                         rotatedTex[2], TextureRotationUtil.flip(rotatedTex[3]),
@@ -155,44 +180,22 @@ public class GPUImageFilter {
 
     public void onChangedRotation(int degress){
         this.rotation=degress;
-        float []  rotatedTex;
 
         switch (rotation) {
             case 0:
-//                rotatedTex=TextureRotationUtil.TEXTURE_NO_ROTATION;
-//                rotatedTex = new float[]{
-//                        TextureRotationUtil.flip(rotatedTex[0]), rotatedTex[1],
-//                        TextureRotationUtil.flip(rotatedTex[2]), rotatedTex[3],
-//                        TextureRotationUtil.flip(rotatedTex[4]), rotatedTex[5],
-//                        TextureRotationUtil.flip(rotatedTex[6]), rotatedTex[7],
-//                };
                 mGLTextureBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_NO_ROTATION.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                 mGLTextureBuffer.put(TextureRotationUtil.TEXTURE_NO_ROTATION);
                 break;
             case 90:
-//                rotatedTex=TextureRotationUtil.TEXTURE_ROTATED_90;
-//                rotatedTex = new float[]{
-//                        rotatedTex[0], TextureRotationUtil.flip(rotatedTex[1]),
-//                        rotatedTex[2], TextureRotationUtil.flip(rotatedTex[3]),
-//                        rotatedTex[4], TextureRotationUtil.flip(rotatedTex[5]),
-//                        rotatedTex[6], TextureRotationUtil.flip(rotatedTex[7]),
-//                };
                 mGLTextureBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_ROTATED_90.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                 mGLTextureBuffer.put(TextureRotationUtil.TEXTURE_ROTATED_90);
                 break;
             case 180:
-//                rotatedTex=TextureRotationUtil.TEXTURE_ROTATED_180;
-//                rotatedTex = new float[]{
-//                        TextureRotationUtil.flip(rotatedTex[0]), rotatedTex[1],
-//                        TextureRotationUtil.flip(rotatedTex[2]), rotatedTex[3],
-//                        TextureRotationUtil.flip(rotatedTex[4]), rotatedTex[5],
-//                        TextureRotationUtil.flip(rotatedTex[6]), rotatedTex[7],
-//                };
                 mGLTextureBuffer = ByteBuffer.allocateDirect(TextureRotationUtil.TEXTURE_ROTATED_180.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                 mGLTextureBuffer.put(TextureRotationUtil.TEXTURE_ROTATED_180);
                 break;
             case 270:
-                rotatedTex=TextureRotationUtil.TEXTURE_ROTATED_270;
+                rotatedTex= TextureRotationUtil.TEXTURE_ROTATED_270;
                 rotatedTex = new float[]{
                         rotatedTex[0], TextureRotationUtil.flip(rotatedTex[1]),
                         rotatedTex[2], TextureRotationUtil.flip(rotatedTex[3]),
@@ -229,20 +232,13 @@ public class GPUImageFilter {
         if (!mIsInitialized) {
             return;
         }
-        //顶点坐标从位置0开始读取
         cubeBuffer.position(0);
-        //顶点坐标每次读取两个顶点值，之后间隔16（每行4个值 * 4个字节）的字节继续读取两个顶点值
-//        glVertexAttribPointer(aPositionLocation, 2, GL_FLOAT, false, 16, mDataBuffer);
         GLES20.glVertexAttribPointer(mGLAttribPosition, 2, GLES20.GL_FLOAT, false, 0, cubeBuffer);
         OpenGLUtils.checkGlError("glVertexAttribPointer");
-        //使能顶点属性
         GLES20.glEnableVertexAttribArray(mGLAttribPosition);
         OpenGLUtils.checkGlError("glEnableVertexAttribArray");
-
-
         textureBuffer.position(0);
         GLES20.glVertexAttribPointer(mGLAttribTextureCoordinate, 2, GLES20.GL_FLOAT, false, 0, textureBuffer);
-
         OpenGLUtils.checkGlError("glVertexAttribPointer");
         GLES20.glEnableVertexAttribArray(mGLAttribTextureCoordinate);
         OpenGLUtils.checkGlError("glEnableVertexAttribArray");
@@ -257,13 +253,18 @@ public class GPUImageFilter {
         onDrawArraysPre();
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         OpenGLUtils.checkGlError("glDrawArrays");
+
         GLES20.glDisableVertexAttribArray(mGLAttribPosition);
         OpenGLUtils.checkGlError("glDisableVertexAttribArray");
+
         GLES20.glDisableVertexAttribArray(mGLAttribTextureCoordinate);
         OpenGLUtils.checkGlError("glDisableVertexAttribArray");
+
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
         OpenGLUtils.checkGlError("glBindTexture");
     }
+
+
 
 
     public void onDraw(final int textureId) {
@@ -300,8 +301,6 @@ public class GPUImageFilter {
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
         OpenGLUtils.checkGlError("glBindTexture");
     }
-
-
 
     protected void onDrawArraysPre() {}
 
@@ -447,7 +446,7 @@ public class GPUImageFilter {
         return "";
     }
 
-    public static String convertStreamToString(java.io.InputStream is) {
+    public static String convertStreamToString(InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }

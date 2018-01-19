@@ -133,12 +133,14 @@ public class SnoppaCamera {
                 return;
             }
             parameters = mCamera.getParameters();
-            List<String> focusModes = parameters.getSupportedFocusModes();
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-            }
+//            List<String> focusModes = parameters.getSupportedFocusModes();
+//            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+//                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+//            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+//                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+//            }
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+
             cameraSizes = parameters.getSupportedPreviewSizes();
             Collections.sort(cameraSizes, new Comparator<Camera.Size>() {
                 @Override
@@ -189,66 +191,7 @@ public class SnoppaCamera {
         autoFocus();
     }
 
-    public void onStartPreview(SurfaceHolder holder, SurfaceTexture texture, Camera.PreviewCallback callback) {
-        try {
-            if (isPreview) {
-                return;
-            }
-            if (!isOpen) {
-                open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            }
-            parameters.setPreviewFormat(ImageFormat.NV21);
-            mCamera.setPreviewCallback(callback);
-            mCamera.setPreviewDisplay(holder);
-            mCamera.setPreviewTexture(texture);
-            mCamera.startPreview();
-            isPreview = true;
-            autoFocus();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void onStartPreview(SurfaceHolder holder, SurfaceTexture texture) {
-        try {
-            if (isPreview) {
-                return;
-            }
-            if (!isOpen) {
-                open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            }
-            parameters.setPreviewFormat(ImageFormat.NV21);
-            mCamera.setPreviewDisplay(holder);
-            mCamera.setPreviewTexture(texture);
-            mCamera.startPreview();
-            isPreview = true;
-            //mCamera.getParameters().getSupportedVideoSizes();
-            //mCamera.getParameters().getPreferredPreviewSizeForVideo();
-            autoFocus();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onStartPreview(SurfaceTexture texture) {
-        try {
-            if (isPreview) {
-                return;
-            }
-            if (!isOpen) {
-                open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            }
-            parameters.setPreviewFormat(ImageFormat.NV21);
-            mCamera.setPreviewTexture(texture);
-            mCamera.startPreview();
-            isPreview = true;
-            autoFocus();
-
-            //mCamera.getParameters().setRecordingHint(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public int getCameraDisplayRotation(int cameraId) {
         Camera.CameraInfo info = new Camera.CameraInfo();
@@ -348,39 +291,7 @@ public class SnoppaCamera {
         return mCamera;
     }
 
-    public int setCameraDisplayOrientation(int cameraId) {
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(cameraId, info);
-        int rotation = App.getCurrentActivity().getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-        }
-        int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            //前置摄像头需要镜像,转化后进行设置
-            mCamera.setDisplayOrientation((360 - result) % 360);
-        } else {
-            result = (info.orientation - degrees + 360) % 360;
-            //后置摄像头直接进行显示
-            mCamera.setDisplayOrientation(result);
-        }
-        Log.i(TAG, "rotate degress:" + result);
-        autoFocus();
-        return result;
-    }
+
 
     private boolean isFocusing = false;
 

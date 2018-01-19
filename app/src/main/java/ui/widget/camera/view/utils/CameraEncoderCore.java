@@ -74,6 +74,7 @@ public class CameraEncoderCore implements EncodeCore.MuxerStartListner {
         }
     }
 
+
     private void startWriteTask() {
         if (writeTask != null) {
             writeTask.onStop();
@@ -104,7 +105,11 @@ public class CameraEncoderCore implements EncodeCore.MuxerStartListner {
     private void writeSample(MediaMuxerData data) {
         int track = data.dataFlag == MediaMuxerData.AUDIO_FLAG ? audioTrack : videoTrack;
         data.bufferInfo.presentationTimeUs = getTimeUs();
-        mMuxer.writeSampleData(track, data.data, data.bufferInfo);
+        try {
+            mMuxer.writeSampleData(track, data.data, data.bufferInfo);
+        }catch (Exception e){
+            Log.e(TAG,e.getMessage());
+        }
     }
 
     @Override
@@ -116,12 +121,14 @@ public class CameraEncoderCore implements EncodeCore.MuxerStartListner {
         }
         if (isVideoTrackReady && isAudioTrackReady) {
             if (mMuxer != null && !muxerStarted) {
-                mMuxer.start();
                 muxerStarted = true;
-                startWriteTask();
+                mMuxer.start();
+//                startWriteTask();
             }
         }
     }
+
+    int count=0;
 
     @Override
     public void onAddTrack(MediaFormat format, int flag) {
@@ -129,8 +136,10 @@ public class CameraEncoderCore implements EncodeCore.MuxerStartListner {
             int index = mMuxer.addTrack(format);
             if (flag == MediaMuxerData.VIDEO_FLAG) {
                 videoTrack = index;
+                count++;
             } else if (flag == MediaMuxerData.AUDIO_FLAG) {
                 audioTrack = index;
+                count++;
             }
         }
     }
@@ -138,11 +147,17 @@ public class CameraEncoderCore implements EncodeCore.MuxerStartListner {
     @Override
     public void onWriteData(MediaMuxerData muxerData) {
         queueData.add(muxerData);
-//        if (muxerStarted) {
-//            int track = muxerData.dataFlag == MediaMuxerData.AUDIO_FLAG ? audioTrack : videoTrack;
-//            muxerData.bufferInfo.presentationTimeUs = getTimeUs();
-//            mMuxer.writeSampleData(track, muxerData.data, muxerData.bufferInfo);
-//        }
+
+        if (!muxerStarted) {
+            return;
+        }
+        muxerData.bufferInfo.presentationTimeUs = getTimeUs();
+        int track = muxerData.dataFlag == MediaMuxerData.AUDIO_FLAG ? audioTrack : videoTrack;
+        mMuxer.writeSampleData(track, muxerData.data, muxerData.bufferInfo);
+    }
+
+    public void startWrite() {
+
     }
 
     @Override
@@ -164,9 +179,8 @@ public class CameraEncoderCore implements EncodeCore.MuxerStartListner {
     }
 
     private void stopMuxer() {
+        Log.i(TAG, "isVideoRecordDone==" + isVideoRecordDone + "isAudioRecordDone==" + isAudioRecordDone);
         if (isVideoRecordDone && isAudioRecordDone) {
-            writeTask.onStop();
-            writeTask = null;
             mMuxer.stop();
             mMuxer.release();
         }

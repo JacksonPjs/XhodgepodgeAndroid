@@ -196,13 +196,14 @@ public class AudioEncodeCore extends EncodeCore{
             }
             inputTask=null;
             outputTask=null;
-            if (encoder != null) {
-                encoder.release();
-            }
             if (audioRecord != null) {
                 audioRecord.stop();
                 audioRecord.release();
             }
+            if (encoder != null) {
+                encoder.release();
+            }
+
         }catch (Exception e){
             Log.e(TAG,"audio encoder release:"+e.getMessage());
             e.printStackTrace();

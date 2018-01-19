@@ -15,6 +15,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ui.activity.CameraActivity;
+import ui.activity.MediaCodecActivity;
 import ui.widget.camera.SnoppaCamera;
 
 /**
@@ -39,11 +40,14 @@ public class FragmentCamera extends Fragment {
     public void initData(){
 
     }
-    @OnClick({R.id.camera})
+    @OnClick({R.id.camera,R.id.mediacodec})
     public void onClick(View view){
         switch (view.getId()){
             case R.id.camera:
                 startActivity(new Intent(getActivity(), CameraActivity.class));
+                break;
+            case R.id.mediacodec:
+                startActivity(new Intent(getActivity(), MediaCodecActivity.class));
                 break;
         }
     }

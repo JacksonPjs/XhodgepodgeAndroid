@@ -34,46 +34,19 @@ public class MyGLSurfaceView extends GLSurfaceView implements SurfaceTexture.OnF
 
     private static final String TAG="MGLSV";
 
-    private int offset;
-    //当前滑动方向 1=right -1=left 0=current
-    private int derection;
-    //是否停止滑动
-    private boolean locked;
-
-    private int downX;
-
-    private int currentX;
-
-    private Scroller scroller;
-
-    private boolean needSwitch;
-
-
-
     //private int mOutputWidth;
     //private int mOutputHeight;
-
-
     private CameraHandler cameraHandler;
     private HandlerThread handlerThread;
     private CameraRender cameraRender;
-
-
-
-
     public MyGLSurfaceView(Context context) {
         super(context);
-        if (scroller == null){
-            scroller=new Scroller(context);
-        }
+
         init();
     }
 
     public MyGLSurfaceView(Context context, AttributeSet attributeSet){
         super(context,attributeSet);
-        if (scroller == null){
-            scroller=new Scroller(context);
-        }
         init();
 
     }
@@ -86,134 +59,13 @@ public class MyGLSurfaceView extends GLSurfaceView implements SurfaceTexture.OnF
         cameraRender=new CameraRender(cameraHandler);
         setRenderer(cameraRender);
         setRenderMode(RENDERMODE_WHEN_DIRTY);
-        int degress = SnoppaCamera.getInstance().getCameraDisplayRotation(Camera.CameraInfo.CAMERA_FACING_BACK);
+        int degress = SnoppaCamera.getInstance().getCameraDisplayRotation(SnoppaCamera.getInstance().getCameraId());
         cameraRender.onRotationChanged(degress);
     }
-
-
-
-
-
-    /**
-     * 重写 屏幕触摸事件监听左右滑动屏幕的时候 实时的切换滤镜
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        Log.i(TAG,"on my gl surface view touch event.....");
-        if (locked) {
-            return true;
-        }
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                downX=(int)event.getX();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (downX == -1) {
-                    return true;
-                }
-                currentX=(int)event.getX();
-                if (currentX > downX) {
-                    derection=1;
-                }else{
-                    derection=-1;
-                }
-                offset= Math.abs(currentX - downX);
-                break;
-            case MotionEvent.ACTION_UP:
-                if (downX == -1) {
-                    return true;
-                }
-                if (offset == 0) {
-                    return true;
-                }
-                locked = true;
-                downX = -1;
-                if (offset > this.getMeasuredWidth() / 3) {
-                    scroller.startScroll(offset, 0, this.getMeasuredWidth() - offset, 0, 100 * (1 - offset / this.getMeasuredWidth()));
-                    needSwitch = true;
-                } else {
-                    scroller.startScroll(offset, 0, -offset, 0, 100 * (offset / this.getMeasuredWidth()));
-                    needSwitch = false;
-                }
-                break;
-        }
-
-        if (SnoppaCamera.getInstance().isPreview) {
-            SnoppaCamera.getInstance().autoFocus();
-        }
-        Log.i(TAG,"on touch event: downX="+downX+" offset="+offset+" currentX="+currentX+" derection="+derection+" locked="+locked);
-        return true;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public int getDerection() {
-        return derection;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public int getDownX() {
-        return downX;
-    }
-
-    public int getCurrentX() {
-        return currentX;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public void setDerection(int derection) {
-        this.derection = derection;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-    }
-
-    public void setDownX(int downX) {
-        this.downX = downX;
-    }
-
-    public void setCurrentX(int currentX) {
-        this.currentX = currentX;
-    }
-
-    public Scroller getScroller(){
-        return scroller;
-    }
-    public void setScroller(Scroller scroller){
-        this.scroller=scroller;
-    }
-
-    public boolean isNeedSwitch(){
-        return needSwitch;
-    }
-
-    public void setNeedSwitch(boolean needSwitch){
-        this.needSwitch=needSwitch;
-    }
-
-
-
-
     @Override
     public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-//        Log.i(TAG,"on surfacetexture frame available");
         requestRender();
     }
-
-
-
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -303,4 +155,16 @@ public class MyGLSurfaceView extends GLSurfaceView implements SurfaceTexture.OnF
                 break;
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+
 }

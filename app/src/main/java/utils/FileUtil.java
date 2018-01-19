@@ -1,5 +1,7 @@
 package utils;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
@@ -9,6 +11,35 @@ import java.util.Vector;
  */
 
 public class FileUtil {
+    /**
+     * 获取默认的xhodgepodge路径
+     *
+     * @return xhodgepodgePath = /storage/emulated/0/xhodgepodge
+     */
+    public static File getXhodgepodgeFile() {
+        final String xhodgepodgePath = Environment.getExternalStorageDirectory().getPath() + "/xhodgepodge";
+        File mXhodgepodgeDir = new File(xhodgepodgePath);
+
+        if (!mXhodgepodgeDir.exists()) {
+            mXhodgepodgeDir.mkdirs();
+        }
+        return mXhodgepodgeDir;
+    }
+    /**
+     * 获取相机相关路径
+     *
+     * @return cameraPath = /storage/emulated/0/xhodgepodge/camera
+     */
+    public static File getCameraFile() {
+        final String xhodgepodgePath = Environment.getExternalStorageDirectory().getPath() + "/xhodgepodge/camera/";
+        File mXhodgepodgeDir = new File(xhodgepodgePath);
+
+        if (!mXhodgepodgeDir.exists()) {
+            mXhodgepodgeDir.mkdirs();
+        }
+        return mXhodgepodgeDir;
+    }
+
 
     public static File createFiles(File file) throws IOException {
         if (!file.exists()) {
@@ -149,4 +180,7 @@ public class FileUtil {
                 }
             }
     }
+
+
+
 }

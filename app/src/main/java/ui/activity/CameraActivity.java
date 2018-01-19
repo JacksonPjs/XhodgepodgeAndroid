@@ -75,6 +75,13 @@ public class CameraActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
 //        SnoppaCamera.getInstance().close();
+//        cameraView.destroyDrawingCache();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

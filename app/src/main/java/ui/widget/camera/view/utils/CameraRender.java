@@ -198,6 +198,8 @@ public class CameraRender implements GLSurfaceView.Renderer{
             }
         });
     }
+
+
     public void setFilter(final GPUImageFilter newfilter) {
         runOnDraw(new Runnable() {
 
